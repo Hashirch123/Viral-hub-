@@ -1,0 +1,381 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Viral Hub Media - Exclusive Clips</title>  
+      
+    <!-- Telegram Mini App Script -->  
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>  
+      
+    <!-- Monetag SDK Tag -->  
+    <script src='//libtl.com/sdk.js' data-zone='11685402' data-sdk='show_11685402'></script>  
+  
+    <style>  
+        * {  
+            margin: 0;  
+            padding: 0;  
+            box-sizing: border-box;  
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;  
+        }  
+  
+        body {  
+            background-color: #0b0c10;  
+            color: #ffffff;  
+            padding: 10px;  
+            padding-bottom: 90px;  
+        }  
+  
+        /* Top Bar Header */  
+        .header {  
+            text-align: center;  
+            padding: 14px 10px;  
+            background: linear-gradient(135deg, #ff0055 0%, #e50914 100%);  
+            border-radius: 14px;  
+            margin-bottom: 15px;  
+            box-shadow: 0 4px 18px rgba(255, 0, 85, 0.4);  
+        }  
+  
+        .header h1 {  
+            font-size: 20px;  
+            font-weight: 900;  
+            letter-spacing: 1px;  
+            text-transform: uppercase;  
+        }  
+  
+        .header p {  
+            font-size: 11px;  
+            opacity: 0.95;  
+            margin-top: 3px;  
+            font-weight: 600;  
+        }  
+  
+        .section-title {  
+            font-size: 15px;  
+            font-weight: 800;  
+            margin: 12px 0 10px 4px;  
+            color: #ff2a55;  
+            display: flex;  
+            align-items: center;  
+            gap: 6px;  
+        }  
+  
+        /* Video List Feed */  
+        .feed {  
+            display: flex;  
+            flex-direction: column;  
+            gap: 14px;  
+        }  
+  
+        .card {  
+            background: #16181f;  
+            border-radius: 14px;  
+            overflow: hidden;  
+            border: 1px solid #282c37;  
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);  
+            cursor: pointer;  
+            transition: transform 0.15s ease;  
+        }  
+  
+        .card:active {  
+            transform: scale(0.97);  
+        }  
+  
+        .thumbnail-container {  
+            position: relative;  
+            width: 100%;  
+            height: 240px;  
+            background-color: #000;  
+        }  
+  
+        .thumbnail-container img {  
+            width: 100%;  
+            height: 100%;  
+            object-fit: cover;  
+        }  
+  
+        /* Badges & Tags */  
+        .badge {  
+            position: absolute;  
+            top: 8px;  
+            left: 8px;  
+            background: #ff0055;  
+            color: #fff;  
+            font-size: 10px;  
+            font-weight: 800;  
+            padding: 4px 8px;  
+            border-radius: 5px;  
+            text-transform: uppercase;  
+            box-shadow: 0 2px 6px rgba(0,0,0,0.6);  
+        }  
+  
+        .duration {  
+            position: absolute;  
+            bottom: 8px;  
+            right: 8px;  
+            background: rgba(0, 0, 0, 0.85);  
+            color: #fff;  
+            font-size: 11px;  
+            font-weight: 700;  
+            padding: 3px 7px;  
+            border-radius: 4px;  
+        }  
+  
+        /* Glowing Play Button */  
+        .play-btn {  
+            position: absolute;  
+            top: 50%;  
+            left: 50%;  
+            transform: translate(-50%, -50%);  
+            width: 52px;  
+            height: 52px;  
+            background: rgba(255, 0, 85, 0.88);  
+            border-radius: 50%;  
+            display: flex;  
+            align-items: center;  
+            justify-content: center;  
+            box-shadow: 0 0 22px rgba(255, 0, 85, 0.9);  
+        }  
+  
+        .play-btn::after {  
+            content: "";  
+            display: block;  
+            width: 0;  
+            height: 0;  
+            border-style: solid;  
+            border-width: 9px 0 9px 16px;  
+            border-color: transparent transparent transparent #ffffff;  
+            margin-left: 3px;  
+        }  
+  
+        .card-details {  
+            padding: 10px 12px;  
+        }  
+  
+        .card-title {  
+            font-size: 13.5px;  
+            font-weight: 700;  
+            line-height: 1.4;  
+            color: #ffffff;  
+            margin-bottom: 5px;  
+        }  
+  
+        .card-stats {  
+            font-size: 11px;  
+            color: #8f94a0;  
+            display: flex;  
+            justify-content: space-between;  
+            font-weight: 600;  
+        }  
+  
+        /* Sticky Fixed Button */  
+        .sticky-footer {  
+            position: fixed;  
+            bottom: 0;  
+            left: 0;  
+            right: 0;  
+            background: rgba(11, 12, 16, 0.95);  
+            backdrop-filter: blur(8px);  
+            padding: 10px 12px;  
+            border-top: 1px solid #282c37;  
+            text-align: center;  
+            z-index: 99;  
+        }  
+  
+        .unlock-btn {  
+            width: 100%;  
+            background: linear-gradient(90deg, #ff0055 0%, #e50914 100%);  
+            color: white;  
+            border: none;  
+            padding: 13px;  
+            font-size: 14px;  
+            font-weight: 900;  
+            border-radius: 10px;  
+            cursor: pointer;  
+            box-shadow: 0 4px 15px rgba(255, 0, 85, 0.6);  
+            text-transform: uppercase;  
+            letter-spacing: 0.5px;  
+        }  
+    </style>  
+</head>  
+<body>  
+  
+    <!-- Header -->  
+    <div class="header">  
+        <h1>🔥 VIRAL HUB MEDIA 🔥</h1>  
+        <p>Exclusive Leaks & Trending Video Reels</p>  
+    </div>  
+  
+    <div class="section-title">  
+        🔞 TRENDING VIRAL CLIPS (8)  
+    </div>  
+  
+    <!-- Video Feed List (8 Items) -->  
+    <div class="feed">  
+  
+        <!-- Card 1 -->  
+        <div class="card" onclick="triggerAd()">  
+            <div class="thumbnail-container">  
+                <span class="badge">🔥 VIRAL LEAK</span>  
+                <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=800&q=80" alt="Viral Video 1">  
+                <div class="play-btn"></div>  
+                <span class="duration">00:48</span>  
+            </div>  
+            <div class="card-details">  
+                <div class="card-title">Full HD Hot Private Party Leaked Reel 🔞</div>  
+                <div class="card-stats">  
+                    <span>👁️ 682.5K Views</span>  
+                    <span>⏱️ 2 mins ago</span>  
+                </div>  
+            </div>  
+        </div>  
+  
+        <!-- Card 2 -->  
+        <div class="card" onclick="triggerAd()">  
+            <div class="thumbnail-container">  
+                <span class="badge" style="background: #e67e22;">⚡ TOP TRENDING</span>  
+                <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80" alt="Viral Video 2">  
+                <div class="play-btn"></div>  
+                <span class="duration">01:15</span>  
+            </div>  
+            <div class="card-details">  
+                <div class="card-title">Instagram Model Midnight Dance Stream Footage 📹</div>  
+                <div class="card-stats">  
+                    <span>👁️ 491.1K Views</span>  
+                    <span>⏱️ 10 mins ago</span>  
+                </div>  
+            </div>  
+        </div>  
+  
+        <!-- Card 3 -->  
+        <div class="card" onclick="triggerAd()">  
+            <div class="thumbnail-container">  
+                <span class="badge" style="background: #9b59b6;">✨ EXCLUSIVE</span>  
+                <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80" alt="Viral Video 3">  
+                <div class="play-btn"></div>  
+                <span class="duration">00:52</span>  
+            </div>  
+            <div class="card-details">  
+                <div class="card-title">Influencer Private Hotel Room Uncut MMS 🚀</div>  
+                <div class="card-stats">  
+                    <span>👁️ 810.8K Views</span>  
+                    <span>⏱️ 25 mins ago</span>  
+                </div>  
+            </div>  
+        </div>  
+  
+        <!-- Card 4 -->  
+        <div class="card" onclick="triggerAd()">  
+            <div class="thumbnail-container">  
+                <span class="badge">🔥 MUST WATCH</span>  
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80" alt="Viral Video 4">  
+                <div class="play-btn"></div>  
+                <span class="duration">02:10</span>  
+            </div>  
+            <div class="card-details">  
+                <div class="card-title">Beach Bikini Shoot Uncensored Behind The Scenes 🌊</div>  
+                <div class="card-stats">  
+                    <span>👁️ 345.2K Views</span>  
+                    <span>⏱️ 40 mins ago</span>  
+                </div>  
+            </div>  
+        </div>  
+  
+        <!-- Card 5 -->  
+        <div class="card" onclick="triggerAd()">  
+            <div class="thumbnail-container">  
+                <span class="badge" style="background: #e67e22;">⚡ LEAKED MMS</span>  
+                <img src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=800&q=80" alt="Viral Video 5">  
+                <div class="play-btn"></div>  
+                <span class="duration">01:45</span>  
+            </div>  
+            <div class="card-details">  
+                <div class="card-title">College Girl Viral MMS Full HD Direct Download 📁</div>  
+                <div class="card-stats">  
+                    <span>👁️ 920.4K Views</span>  
+                    <span>⏱️ 1 hour ago</span>  
+                </div>  
+            </div>  
+        </div>  
+  
+        <!-- Card 6 -->  
+        <div class="card" onclick="triggerAd()">  
+            <div class="thumbnail-container">  
+                <span class="badge" style="background: #9b59b6;">✨ HOT REEL</span>  
+                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=80" alt="Viral Video 6">  
+                <div class="play-btn"></div>  
+                <span class="duration">00:35</span>  
+            </div>  
+            <div class="card-details">  
+                <div class="card-title">TikTok Star Viral Car Scene Video Exposed 💥</div>  
+                <div class="card-stats">  
+                    <span>👁️ 512.9K Views</span>  
+                    <span>⏱️ 2 hours ago</span>  
+                </div>  
+            </div>  
+        </div>  
+  
+        <!-- Card 7 -->  
+        <div class="card" onclick="triggerAd()">  
+            <div class="thumbnail-container">  
+                <span class="badge">🔥 POPULAR</span>  
+                <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=800&q=80" alt="Viral Video 7">  
+                <div class="play-btn"></div>  
+                <span class="duration">01:05</span>  
+            </div>  
+            <div class="card-details">  
+                <div class="card-title">Nightclub Famous Model Scandal Video Uncut 🍸</div>  
+                <div class="card-stats">  
+                    <span>👁️ 730.0K Views</span>  
+                    <span>⏱️ 3 hours ago</span>  
+                </div>  
+            </div>  
+        </div>  
+  
+        <!-- Card 8 -->  
+        <div class="card" onclick="triggerAd()">  
+            <div class="thumbnail-container">  
+                <span class="badge" style="background: #e67e22;">⚡ TOP VIRAL</span>  
+                <img src="https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=800&q=80" alt="Viral Video 8">  
+                <div class="play-btn"></div>  
+                <span class="duration">02:30</span>  
+            </div>  
+            <div class="card-details">  
+                <div class="card-title">Actress Secret Gym Video Leaked Online 🔞</div>  
+                <div class="card-stats">  
+                    <span>👁️ 995.1K Views</span>  
+                    <span>⏱️ 4 hours ago</span>  
+                </div>  
+            </div>  
+        </div>  
+  
+    </div>  
+  
+    <!-- Bottom Sticky Unlock Button -->  
+    <div class="sticky-footer">  
+        <button class="unlock-btn" onclick="triggerAd()">🔓 UNLOCK ALL 8 VIP VIDEOS NOW</button>  
+    </div>  
+  
+    <!-- Monetag Trigger Logic -->  
+    <script>  
+        // Telegram WebApp Initialization  
+        if (window.Telegram && window.Telegram.WebApp) {  
+            window.Telegram.WebApp.ready();  
+            window.Telegram.WebApp.expand();  
+        }  
+  
+        // Trigger Monetag Rewarded Interstitial Ad  
+        function triggerAd() {  
+            if (typeof show_11685402 === 'function') {  
+                show_11685402().then(() => {  
+                    alert('Video file loading... Please wait!');  
+                }).catch((err) => {  
+                    console.log('Ad closed or failed:', err);  
+                });  
+            } else {  
+                alert('Connecting to stream server...');  
+            }  
+        }  
+    </script>  
+</body>  
+</html>  
