@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#090b14">
+  <title>Viral Hub Media</title>
+
+  <!-- Telegram Mini App -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <!-- Monetag -->
+  <script src="//libtl.com/sdk.js" data-zone="11685402" data-sdk="show_11685402"></script>
+
+  <style>
+    :root {
+      --bg: #070811;
+      --card: rgba(255,255,255,.075);
+      --border: rgba(255,255,255,.12);
+      --text: #fff;
+      --muted: #9da3b8;
+      --pink: #ff2f7d;
+      --purple: #775cff;
+      --blue: #229ed9;
+      --green: #32d583;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      min-height: 100vh;
+      color: var(--text);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(circle at 15% 0%, rgba(119,92,255,.28), transparent 28%),
+        radial-gradient(circle at 90% 12%, rgba(255,47,125,.20), transparent 26%),
+        linear-gradient(145deg, #070811 0%, #0d1020 55%, #080912 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+      background-size: 34px 34px;
+      mask-image: linear-gradient(to bottom, black, transparent 80%);
+    }
+
+    .app {
+      width: min(980px, 100%);
+      margin: auto;
+      padding: 16px 14px 42px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ---------- HEADER ---------- */
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 25px 18px 22px;
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      background: linear-gradient(135deg, rgba(255,255,255,.09), rgba(255,255,255,.035));
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 25px 70px rgba(0,0,0,.35);
+      text-align: center;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      right: -90px;
+      top: -100px;
+      background: rgba(255,47,125,.28);
+      filter: blur(55px);
+      border-radius: 50%;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.10);
+      color: #dfe2f1;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+    }
+
+    .logo {
+      margin-top: 12px;
+      font-size: clamp(30px, 7vw, 52px);
+      line-height: 1;
+      font-weight: 950;
+      letter-spacing: -1.7px;
+      background: linear-gradient(90deg, #fff 0%, #ff73a9 42%, #9e8dff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero p {
+      max-width: 580px;
+      margin: 12px auto 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .channel-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 15px;
+      padding: 9px 13px;
+      border-radius: 999px;
+      color: #d9f2ff;
+      background: rgba(34,158,217,.12);
+      border: 1px solid rgba(34,158,217,.25);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    /* ---------- NOTICE ---------- */
+
+    .notice {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 16px 0;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(255,255,255,.045);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .notice-icon {
+      width: 38px;
+      height: 38px;
+      flex: 0 0 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      font-size: 18px;
+    }
+
+    .notice strong {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 3px;
+    }
+
+    .notice span {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    /* ---------- GRID ---------- */
+
+    .section-title {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      margin: 22px 2px 12px;
+    }
+
+    .section-title h2 {
+      font-size: 20px;
+      letter-spacing: -.4px;
+    }
+
+    .section-title span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 13px;
+    }
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      min-width: 0;
+      border-radius: 22px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      box-shadow: 0 18px 45px rgba(0,0,0,.28);
+      transform: translateZ(0);
+      transition: transform .22s ease, border-color .22s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255,255,255,.23);
+    }
+
+    .thumb-wrap {
+      position: relative;
+      aspect-ratio: 4 / 5;
+      overflow: hidden;
+      background: #171a2b;
+    }
+
+    .thumb {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      transition: transform .45s ease;
+    }
+
+    .card:hover .thumb { transform: scale(1.04); }
+
+    .thumb-wrap::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,.04) 25%,
+        rgba(5,6,14,.88) 100%
+      );
+    }
+
+    .hot {
+      position: absolute;
+      z-index: 2;
+      top: 10px;
+      left: 10px;
+      padding: 6px 9px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.46);
+      border: 1px solid rgba(255,255,255,.15);
+      backdrop-filter: blur(10px);
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: .6px;
+    }
+
+    .card-content {
+      position: absolute;
+      z-index: 3;
+      left: 11px;
+      right: 11px;
+      bottom: 11px;
+    }
+
+    .title {
+      font-size: 16px;
+      line-height: 1.15;
+      font-weight: 900;
+      margin-bottom: 9px;
+      text-shadow: 0 2px 14px rgba(0,0,0,.5);
+    }
+
+    .watch {
+      width: 100%;
+      border: 0;
+      padding: 11px 8px;
+      border-radius: 13px;
+      color: #fff;
+      background: linear-gradient(100deg, var(--pink), var(--purple));
+      box-shadow: 0 9px 25px rgba(119,92,255,.25);
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: transform .15s ease, filter .15s ease;
+    }
+
+    .watch:active {
+      transform: scale(.97);
+      filter: brightness(.9);
+    }
+
+    .watch:disabled {
+      opacity: .65;
+      cursor: wait;
+    }
+
+    /* ---------- CHANNEL RESULT ---------- */
+
+    #channelSection {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .channel-card {
+      position: relative;
+      overflow: hidden;
+      padding: 22px 16px;
+      border-radius: 24px;
+      border: 1px solid rgba(50,213,131,.25);
+      background:
+        radial-gradient(circle at 100% 0%, rgba(50,213,131,.17), transparent 35%),
+        rgba(255,255,255,.055);
+      box-shadow: 0 20px 55px rgba(0,0,0,.28);
+      text-align: center;
+    }
+
+    .success-icon {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 11px;
+      border-radius: 18px;
+      background: rgba(50,213,131,.12);
+      border: 1px solid rgba(50,213,131,.25);
+      font-size: 25px;
+    }
+
+    .channel-card h2 {
+      font-size: 21px;
+      margin-bottom: 7px;
+    }
+
+    .channel-card p {
+      max-width: 500px;
+      margin: auto auto 16px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .join-btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      text-decoration: none;
+      color: #fff;
+      background: linear-gradient(100deg, #168ac0, var(--blue));
+      box-shadow: 0 12px 28px rgba(34,158,217,.22);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .copy-link {
+      margin-top: 10px;
+      width: 100%;
+      padding: 11px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      color: #dfe3f3;
+      background: rgba(255,255,255,.045);
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    /* ---------- MODAL / AD WAIT ---------- */
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(2,3,9,.82);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .modal-box {
+      width: min(390px, 100%);
+      padding: 25px 20px;
+      text-align: center;
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,.13);
+      background: #121526;
+      box-shadow: 0 30px 90px rgba(0,0,0,.55);
+    }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 17px;
+      border: 4px solid rgba(255,255,255,.12);
+      border-top-color: var(--pink);
+      border-right-color: var(--purple);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .modal-box h3 {
+      font-size: 18px;
+      margin-bottom: 7px;
+    }
+
+    .modal-box p {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    /* ---------- FOOTER ---------- */
+
+    footer {
+      margin-top: 28px;
+      text-align: center;
+      color: #686e84;
+      font-size: 10px;
+      line-height: 1.6;
+    }
+
+    /* ---------- DESKTOP ---------- */
+
+    @media (min-width: 650px) {
+      .app { padding: 24px 20px 55px; }
+      .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 15px; }
+      .hero { padding: 34px 25px 30px; }
+      .thumb-wrap { aspect-ratio: 4 / 5.2; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="app">
+
+    <section class="hero">
+      <div class="brand">🔥 VIRAL CONTENT HUB</div>
+      <div class="logo">Viral Hub Media</div>
+      <p>
+        TikTok, Instagram, trending clips اور روزانہ کی viral updates
+        ایک ہی جگہ۔
+      </p>
+      <div class="channel-top">✈️ Official Telegram Channel</div>
+    </section>
+
+    <div class="notice">
+      <div class="notice-icon">▶</div>
+      <div>
+        <strong>Tap Watch Now to unlock</strong>
+        <span>Complete the ad flow and your Telegram channel access will appear automatically.</span>
+      </div>
+    </div>
+
+    <div class="section-title">
+      <h2>🔥 Trending Categories</h2>
+      <span>8 categories</span>
+    </div>
+
+    <section class="grid">
+
+      <article class="card">
+        <div class="thumb-wrap">
+          <img class="thumb" src="images/image1.jpeg" alt="TikTok Viral Videos">
+          <span class="hot">🔥 TRENDING</span>
+          <div class="card-content">
+            <div class="title">TikTok Viral Videos</div>
+            <button class="watch" onclick="watchNow(this, 'TikTok Viral Videos')">▶ WATCH NOW</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb-wrap">
+          <img class="thumb" src="images/image2.jpeg" alt="Instagram Viral">
+          <span class="hot">⚡ VIRAL</span>
+          <div class="card-content">
+            <div class="title">Instagram Viral</div>
+            <button class="watch" onclick="watchNow(this, 'Instagram Viral')">▶ WATCH NOW</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb-wrap">
+          <img class="thumb" src="images/image3.jpeg" alt="Trending Videos">
+          <span class="hot">🔥 HOT</span>
+          <div class="card-content">
+            <div class="title">Trending Videos</div>
+            <button class="watch" onclick="watchNow(this, 'Trending Videos')">▶ WATCH NOW</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb-wrap">
+          <img class="thumb" src="images/image4.jpeg" alt="Short Viral Clips">
+          <span class="hot">NEW</span>
+          <div class="card-content">
+            <div class="title">Short Viral Clips</div>
+            <button class="watch" onclick="watchNow(this, 'Short Viral Clips')">▶ WATCH NOW</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb-wrap">
+          <img class="thumb" src="images/image5.jpeg" alt="Indian Viral Videos">
+          <span class="hot">🇮🇳 POPULAR</span>
+          <div class="card-content">
+            <div class="title">Indian Viral Videos</div>
+            <button class="watch" onclick="watchNow(this, 'Indian Viral Videos')">▶ WATCH NOW</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb-wrap">
+          <img class="thumb" src="images/image6.jpeg" alt="Social Media Trends">
+          <span class="hot">SOCIAL</span>
+          <div class="card-content">
+            <div class="title">Social Media Trends</div>
+            <button class="watch" onclick="watchNow(this, 'Social Media Trends')">▶ WATCH NOW</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb-wrap">
+          <img class="thumb" src="images/image7.jpeg" alt="Latest Viral Clips">
+          <span class="hot">✨ LATEST</span>
+          <div class="card-content">
+            <div class="title">Latest Viral Clips</div>
+            <button class="watch" onclick="watchNow(this, 'Latest Viral Clips')">▶ WATCH NOW</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb-wrap">
+          <img class="thumb" src="images/image8.jpeg" alt="Daily Viral Updates">
+          <span class="hot">🚀 DAILY</span>
+          <div class="card-content">
+            <div class="title">Daily Viral Updates</div>
+            <button class="watch" onclick="watchNow(this, 'Daily Viral Updates')">▶ WATCH NOW</button>
+          </div>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- THIS SECTION IS REVEALED ONLY AFTER THE MONETAG PROMISE RESOLVES -->
+    <section id="channelSection">
+      <div class="channel-card">
+        <div class="success-icon">✓</div>
+        <h2>Content Unlocked 🎉</h2>
+        <p>
+          Advertisement complete ہو گیا۔ اب مزید viral content کے لیے
+          ہمارا official Telegram channel join کریں۔
+        </p>
+
+        <a
+          class="join-btn"
+          href="https://t.me/viralhub_media"
+          target="_blank"
+          rel="noopener noreferrer">
+          ✈️ JOIN TELEGRAM CHANNEL
+        </a>
+
+        <button class="copy-link" onclick="copyChannelLink()">
+          📋 Channel Link Copy کریں
+        </button>
+      </div>
+    </section>
+
+    <footer>
+      © 2026 Viral Hub Media · Official Mini App
+    </footer>
+
+  </main>
+
+
+  <!-- AD / LOADING MODAL -->
+  <div class="modal" id="adModal">
+    <div class="modal-box">
+      <div class="spinner"></div>
+      <h3>Watch the full ad to unlock 🔓</h3>
+      <p>
+        براہِ کرم advertisement کو مکمل ہونے دیں۔
+        مکمل ہونے کے بعد Telegram channel کا button خود ظاہر ہو جائے گا۔
+      </p>
+    </div>
+  </div>
+
+
+  <script>
+    const CHANNEL_URL = "https://t.me/viralhub_media";
+
+    // Telegram Mini App initialization
+    if (window.Telegram && Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+
+    /*
+      MAIN FLOW:
+
+      Watch Now
+          ↓
+      Monetag Rewarded Interstitial
+          ↓
+      Promise resolves
+          ↓
+      Channel section becomes visible
+    */
+
+    async function watchNow(button, category) {
+      const modal = document.getElementById("adModal");
+      const channel = document.getElementById("channelSection");
+
+      // Prevent accidental double-clicks
+      if (button.disabled) return;
+
+      button.disabled = true;
+      button.textContent = "LOADING...";
+
+      // Hide previous channel result while a new ad is requested
+      channel.style.display = "none";
+
+      modal.style.display = "flex";
+
+      try {
+        if (typeof show_11685402 !== "function") {
+          throw new Error("Monetag SDK is not available.");
+        }
+
+        /*
+          Monetag Rewarded Interstitial.
+          The .then/await runs only when the SDK resolves.
+        */
+        await show_11685402();
+
+        // Ad promise completed successfully
+        modal.style.display = "none";
+
+        // IMPORTANT: Channel section is ALWAYS shown after successful completion
+        channel.style.display = "block";
+
+        channel.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+
+        button.textContent = "✓ UNLOCKED";
+
+      } catch (error) {
+        console.log("Monetag:", error);
+
+        modal.style.display = "none";
+
+        button.disabled = false;
+        button.textContent = "▶ WATCH NOW";
+
+        alert(
+          "Advertisement اس وقت load نہیں ہو سکا۔ براہِ کرم دوبارہ Tap Watch Now to unlock۔"
+        );
+      }
+    }
+
+    async function copyChannelLink() {
+      try {
+        await navigator.clipboard.writeText(CHANNEL_URL);
+        alert("Telegram channel link copy ہو گیا ✓");
+      } catch (e) {
+        alert(CHANNEL_URL);
+      }
+    }
+
+    /*
+      OPTIONAL:
+      Monetag In-App Interstitial کو یہاں بعد میں enable کیا جا سکتا ہے۔
+      ابھی اسے intentionally automatic نہیں رکھا گیا تاکہ Watch Now کا
+      rewarded flow صاف رہے۔
+    */
+
+    /*
+    show_11685402({
+      type: 'inApp',
+      inAppSettings: {
+        frequency: 2,
+        capping: 0.1,
+        interval: 30,
+        timeout: 5,
+        everyPage: false
+      }
+    });
+    */
+  </script>
+
+</body>
+</html>
